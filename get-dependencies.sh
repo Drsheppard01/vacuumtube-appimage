@@ -7,33 +7,35 @@ ARCH=$(uname -m)
 echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
 pacman -Syu --noconfirm \
-	base-devel        \
-	inetutils         \
-	libx11            \
-	libxrandr         \
-	libxss            \
-	nss               \
-	pulseaudio        \
-	pulseaudio-alsa   \
-	pipewire-audio
+    libnotify \
+    libnss_nis \
+    libxss \
+    libxtst
 
 if [ "$ARCH" = 'x86_64' ]; then
-	pacman -Syu --noconfirm libva-intel-driver
+    pacman -Syu --noconfirm libva-intel-driver
 fi
 
 echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
 get-debloated-pkgs --add-common --prefer-nano ffmpeg-mini intel-media-driver-mini
 
-# If the application needs to be manually built that has to be done down here
+echo "Getting app..."
+echo "---------------------------------------------------------------"
+case "$ARCH" in
+	aarch64) farch=arm64;;
+	x86_64)  farch=x64;;
+esac
+TARBALL_LINK=$(wget https://api.github.com/repos/shy1132/VacuumTube/releases -O - \
+	| sed 's/[()",{} ]/\n/g' | grep -o -m 1 "https.*/VacuumTube.*${farch}.tar.gz")
 
-# if you also have to make nightly releases check for DEVEL_RELEASE = 1
-#
-# if [ "${DEVEL_RELEASE-}" = 1 ]; then
-# 	nightly build steps
-# else
-# 	regular build steps
-# fi
+wget --retry-connrefused --tries=30 "$TARBALL_LINK" -O /tmp/temp.tar.gz
 
-# Note that when building manually, you want to output the version of the
-# application to a ~/version file and remove VERSION from make-appimage.sh
+mkdir -p ./AppDir/bin && (
+	cd ./AppDir/bin
+	cp -v ./resources/com.bitwarden.desktop.desktop ../
+	cp -v ./resources/icons/256x256.png ../
+	cp -v ./resources/icons/256x256.png ../.DirIcon
+)
+
+echo "$TARBALL_LINK" | awk -F'/' '{print $(NF-1)}' | awk -F'-' '{print $NF}' > ~/version
