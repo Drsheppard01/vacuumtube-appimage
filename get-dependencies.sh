@@ -6,14 +6,24 @@ ARCH=$(uname -m)
 
 echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
-# pacman -Syu --noconfirm PACKAGESHERE
+pacman -Syu --noconfirm \
+	base-devel        \
+	inetutils         \
+	libx11            \
+	libxrandr         \
+	libxss            \
+	nss               \
+	pulseaudio        \
+	pulseaudio-alsa   \
+	pipewire-audio
+
+if [ "$ARCH" = 'x86_64' ]; then
+	pacman -Syu --noconfirm libva-intel-driver
+fi
 
 echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
-get-debloated-pkgs --add-common --prefer-nano
-
-# Comment this out if you need an AUR package
-#make-aur-package PACKAGENAME
+get-debloated-pkgs --add-common --prefer-nano ffmpeg-mini intel-media-driver-mini
 
 # If the application needs to be manually built that has to be done down here
 
