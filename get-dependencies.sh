@@ -34,6 +34,4 @@ wget --retry-connrefused --tries=30 "$TARBALL_LINK" -O ./"${TARBALL_LINK##*/}"
 mkdir -p ./AppDir/bin
 tar -xvf ./"${TARBALL_LINK##*/}"
 mv -v ./VacuumTube-$farch/* ./AppDir/bin
-mv -v .AppDir/bin/vacuumtube .AppDir/bin/VacuumTube # name app and 
-
 echo "$TARBALL_LINK" | awk -F'/' '{print $(NF-1)}' | awk -F'-' '{print $NF}' >~/version

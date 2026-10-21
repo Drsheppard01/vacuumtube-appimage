@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=VacuumTube
-Exec=VacuumTube %U
+Exec=vacuumtube %U
 Terminal=false
 Type=Application
 Icon=rocks.shy.VacuumTube
