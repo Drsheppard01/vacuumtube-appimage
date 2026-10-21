@@ -23,19 +23,16 @@ get-debloated-pkgs --add-common --prefer-nano ffmpeg-mini intel-media-driver-min
 echo "Getting app..."
 echo "---------------------------------------------------------------"
 case "$ARCH" in
-	aarch64) farch=arm64;;
-	x86_64)  farch=x64;;
+aarch64) farch=arm64 ;;
+x86_64) farch=x64 ;;
 esac
-TARBALL_LINK=$(wget https://api.github.com/repos/shy1132/VacuumTube/releases -O - \
-	| sed 's/[()",{} ]/\n/g' | grep -o -m 1 "https.*/VacuumTube.*${farch}.tar.gz")
+TARBALL_LINK=$(wget https://api.github.com/repos/shy1132/VacuumTube/releases -O - |
+    sed 's/[()",{} ]/\n/g' | grep -o -m 1 "https.*/VacuumTube.*${farch}.tar.gz")
 
-wget --retry-connrefused --tries=30 "$TARBALL_LINK" -O /tmp/temp.tar.gz
+wget --retry-connrefused --tries=30 "$TARBALL_LINK" -O ./"${TARBALL_LINK##*/}"
 
-mkdir -p ./AppDir/bin && (
-	cd ./AppDir/bin
-	cp -v ./resources/com.bitwarden.desktop.desktop ../
-	cp -v ./resources/icons/256x256.png ../
-	cp -v ./resources/icons/256x256.png ../.DirIcon
-)
+mkdir -p ./AppDir/bin
+tar -xvf ./"${TARBALL_LINK##*/}"
+mv -v ./VacuumTube/* ./AppDir/bin
 
-echo "$TARBALL_LINK" | awk -F'/' '{print $(NF-1)}' | awk -F'-' '{print $NF}' > ~/version
+echo "$TARBALL_LINK" | awk -F'/' '{print $(NF-1)}' | awk -F'-' '{print $NF}' >~/version
